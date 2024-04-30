@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 import authReducer from "../reducers/authReducer";
 import movieReducer from "../reducers/movieReducer";
 const middlewares = [thunk];
-//helo
+
 if (process.env.NODE_ENV === 'development') {
     const { logger } = require('redux-logger');
 
