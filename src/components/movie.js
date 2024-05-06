@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchMovie } from "../actions/movieActions";
-import MovieDetail from "../components/moviedetail"
+import MovieDetail from "../components/moviedetail";
 
-// support routing
-
-function Movie(props) {
-    const [selectedMovie] = useState(props.selectedMovie);
-    const params = useParams();
-    const movieId = params.movieId;
-    console.log(movieId);
+function Movie() {
+    const { movieId } = useParams(); // Get movieId from the URL
     const dispatch = useDispatch();
-    if (selectedMovie == null) {
-        dispatch(fetchMovie(movieId));
-    }
+    const movie = useSelector(state => state.movie.selectedMovie); // Accessing the selected movie from Redux state
 
-    return (<MovieDetail movieId={movieId} />)
+    useEffect(() => {
+        if (movieId && (!movie || movie._id !== movieId)) {
+            dispatch(fetchMovie(movieId)); // Fetch movie details if not already loaded or if different movieId
+        }
+    }, [movieId, movie, dispatch]); // Dependency array includes movieId and movie to handle updates
+
+    // Conditional rendering to show loading state or movie details
+    return (
+        movie ? <MovieDetail movie={movie} /> : <div>Loading...</div>
+    );
 }
 
 export default Movie;
